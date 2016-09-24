@@ -123,7 +123,7 @@ void drawObjectScene(void)
       glColor3f(0.0, 0.0, 0.0);
       glTranslatef(0.0, 1.02, 0.0);
       glRotatef(-90.0, 1.0, 0.0, 0.0);
-      gluCylinder(pObj, 0.17, 0.17, 0.4, 26, 13);
+      gluCylinder(pObj, 0.17, 0.0, 0.2, 26, 13);
 
       // disco chapeu
       glDisable(GL_CULL_FACE);
