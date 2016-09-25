@@ -22,7 +22,7 @@ static GLfloat rotacionaX = 0.0;
 static GLfloat rotacionaY = 0.0;
 
 // Função de Reshape
-void reshapeFunc(int w, int h)
+void reshape(int w, int h)
 {
   GLfloat fa;
 
@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
   glutInitWindowSize(TELAX, TELAY);
   glutCreateWindow("CGR - Gabriel Conejo - TC4 Boneco de Neve");
-  glutReshapeFunc(reshapeFunc);
+  glutReshapeFunc(reshape);
   glutDisplayFunc(drawObjectScene);
   setScene();
   glutMainLoop();
