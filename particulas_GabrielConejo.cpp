@@ -50,7 +50,7 @@ void inicializaParticula(int i) {
 }
 
 void inicializa( ) {
-  int x, z;
+  //int x, z;
 
     glShadeModel(GL_SMOOTH); // Smooth Shading selecionado (não testei com flat shading)
     glClearColor(0.5, 0.5, 1.0, 0.5);//Cores do fundo
@@ -61,7 +61,7 @@ void inicializa( ) {
     for (i = 0; i < NROPART; i++) {
         inicializaParticula(i);
     }
-    
+
 }
 
 // Função para desenhar as particulas de neve
@@ -91,8 +91,8 @@ void desenhaParticulasNeve() {
 
 // Cria o cenário e desenha as particulas
 void criaCenario( ) {
-  int i, j;
-  float x, y, z;
+//  int i, j;
+  //float x, y, z;
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Limpar Buffers
   glMatrixMode(GL_MODELVIEW); //Aplica operações sobre a pilha  de matrizes modelview
   glLoadIdentity(); // Substitui matriz pela matriz identidade
