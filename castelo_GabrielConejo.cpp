@@ -1,3 +1,11 @@
+/*
+ *  UDESC - Universidade do Estado de Santa Catarina
+ *  Computação Gráfica - CGR0001
+ *  T4 - Quadricas - Boneco de Neve
+ *  Gabriel Guebarra Conejo
+ *  Professor - André Tavares da Silva
+ *  2016/02
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -81,7 +89,7 @@ void castle() {
 
     //telhado
     glPushMatrix();
-    glColor3d(1, 0.0, 0);
+    glColor3d(1, 0.5, 0.2);
     glTranslated(-1, 0, -4);
     glRotated(87, 1, 0, 0);
     glRotated(-30, 0, 0, 1);
@@ -118,7 +126,7 @@ void drawScene() {
     glutSwapBuffers();
 }
 
-// Funçao Reshape
+// Funçao Reshape FINALMENTE ARRUMEI ISSO AEEEEES
 void reshape(int w, int h) {
     glViewport(0, 0, w, h);
     glMatrixMode (GL_PROJECTION);
@@ -153,7 +161,7 @@ int main(int argc, char** argv) {
     glutDisplayFunc(drawScene); //callback, qual função vai ser chamada para mostrar
     glutIdleFunc(idle);
 
-    glClearColor(0, 0, 0, 0);
+    glClearColor(0.5, 0.25, 0.25, 0.25);
     glEnable (GL_CULL_FACE);
     glCullFace (GL_BACK);
 
