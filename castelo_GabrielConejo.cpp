@@ -1,153 +1,180 @@
-/*
- *	UDESC - Universidade do Estado de Santa Catarina
- *	Computação Gráfica - CGR0001
- *	T4 - Quadricas - Castelo
- *	Gabriel Guebarra Conejo
- *  Professor - André Tavares da Silva
- *  2016/02
- */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include <GL/glut.h>
-GLfloat dx, y, z;
+#include <GL/gl.h>
+#include <time.h>
 
-void display(void)
-{
-        glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glBegin(GL_QUADS);                                            // início triângulo
-          glColor3f(1.0, 0.0f, 0.0f);
-          glNormal3f(10.0f, 0.0f, 0.0f);
-          glVertex3f( 0.0f,   0.0f, 0.0f);
-          glVertex3f( 0.0f,   0.5f, 0.0f);
-          glVertex3f( 0.5f,   0.5f, 0.0f);
-          glVertex3f( 0.5f,   0.0f, 0.0f);
-        glEnd();
+#define TELAX   1366 //Tamanho da tela em x
+#define TELAY   728 //Tamanho da tela em y (Otimizado para a resolução dos pcs da udesc)
 
-        glBegin(GL_TRIANGLES);
-          glColor3f(0,0,0);                                                // início triângulo
-          glVertex3f( 0.0f, 2.0f, 0.0f);                                  // Topo
-          glVertex3f(1.0f,0.0f, 0.0f);                                  // Esquerda embaixo
-          glVertex3f( -1.0f,0.0f, 0.0f);                                  // Direita embaixo
-        glEnd();                                                        // fim triângulo
+// funçoes Globais
+static int slices = 25;
+static int stacks = 25;
+GLUquadricObj *quadric;
+GLUquadricObj *fundosEsq;
+GLUquadricObj *fundosDir;
+GLUquadricObj *frenteEsq;
+GLUquadricObj *frenteDir;
+GLUquadricObj *telhadoFundosEsq;
+GLUquadricObj *telhadoFrenteDir;
+GLUquadricObj *telhadoFrenteEsq;
+GLUquadricObj *telhadoTorre;
 
-        glBegin(GL_TRIANGLES);                                          // início triângulo
-          glColor3f(0,0,0);
-          glVertex3f( 2.0f, 0.0f, 0.0f);                                  // Topo
-          glVertex3f(3.0f,-1.0f, 0.0f);                                  // Esquerda embaixo
-          glVertex3f( 1.0f,-1.0f, 0.0f);                                  // Direita embaixo
-        glEnd();                                                        // fim triângulo
+void castle() {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glPushMatrix();
+    glColor3d(1, 0.5, 0.0);
 
-        glBegin(GL_TRIANGLES);
-        glColor3f(0,0,0);                                                 // início triângulo
-        glVertex3f( -2.0f, 0.0f, 0.0f);                                  // Topo
-        glVertex3f(-3.0f,-1.0f, 0.0f);                                  // Esquerda embaixo
-        glVertex3f( -1.0f,-1.0f, 0.0f);                                  // Direita embaixo
-        glEnd();
-        glColor3f(0, 0, 0);
-        glPushMatrix();
-        glTranslatef(0.0, -2.0, 0.0);
-        glutSolidCube (1);
-        glPopMatrix();
+    glTranslated(-1, 0, -4);
+    glRotated(87, 1, 0, 0);
+    glRotated(-30, 0, 0, 1);
+    glBegin (GL_QUADS);
 
-        glColor3f(0, 0, 0);
-        glPushMatrix();
-        glTranslatef(1.0, -2.0, 0.0);
-        glutSolidCube (1);
-        glPopMatrix();
+    //muros
+    //lado esquerdo
+    glVertex3f(-0.1f, 0.0f, 0.1f);
+    glVertex3f(-0.1f, 0.0f, 0.6f);
+    glVertex3f(-0.1f, 2.0f, 0.6f);
+    glVertex3f(-0.1f, 2.0f, 0.1f);
+    //parte de trás
+    glVertex3f(0.0f, -0.1f, 0.1f);
+    glVertex3f(2.0f, -0.1f, 0.6f);
+    glVertex3f(2.0f, -0.1f, 0.6f);
+    glVertex3f(2.0f, -0.1f, 0.1f);
+    //lado direito
+    glVertex3f(2.1f, 2.0f, 0.6f);
+    glVertex3f(2.1f, 2.0f, 0.1f);
+    glVertex3f(2.1f, 0.0f, 0.1f);
+    glVertex3f(2.1f, 0.0f, 0.6f);
+    //frente
+    glVertex3f(2.0f, 2.1f, 0.6f);
+    glVertex3f(2.0f, 2.1f, 0.1f);
+    glVertex3f(0.0f, 2.1f, 0.1f);
+    glVertex3f(0.0f, 2.1f, 0.6f);
+    glEnd;
 
-        glColor3f(0, 0, 0);
-        glPushMatrix();
-        glTranslatef(-1.0, -2.0, 0.0);
-        glutSolidCube (1);
-        glPopMatrix();
+    glVertex3f(0.15f, 2.5f, 0.5f);
+    glVertex3f(0.15f, 2.5f, -0.2f);
+    glVertex3f(0.0f, 2.5f, -0.2f);
+    glVertex3f(0.0f, 2.5f, 0.5f);
 
-        glColor3f(0, 0, 0);
-        glPushMatrix();
-        glTranslatef(-2.0, -2.0, 0.0);
-        glutSolidCube (1);
-        glPopMatrix();
+    //Entrada
+    //Torres
+    glBegin(GL_QUADS);
+    //Fundos esquerda
+    fundosEsq = gluNewQuadric();
+    gluCylinder(fundosEsq, 0.2, 0.2, 0.6, slices, stacks);
+    glTranslated(0, 2, 0);
+    //Frente esquerda
+    frenteDir = gluNewQuadric();
+    gluCylinder(frenteDir, 0.2, 0.2, 0.6, slices, stacks);
+    glTranslated(2, 0, 0);
+    //Frente direita
+    frenteDir = gluNewQuadric();
+    gluCylinder(frenteDir, 0.2, 0.2, 0.6, slices, stacks);
+    glEnd;
+    glPopMatrix();
 
-        glColor3f(0, 0, 0);
-        glPushMatrix();
-        glTranslatef(2.0, -2.0, 0.0);
-        glutSolidCube (1);
-        glPopMatrix();
 
-        glColor3f(0, 0, 0);
-        glPushMatrix();
-        glTranslatef(2.0, -1.0, 0.0);
-        glutSolidCube (1);
-        glPopMatrix();
+    //telhado
+    glPushMatrix();
+    glColor3d(1, 0.0, 0);
+    glTranslated(-1, 0, -4);
+    glRotated(87, 1, 0, 0);
+    glRotated(-30, 0, 0, 1);
+    //Fundos esquerdo
+    telhadoFundosEsq = gluNewQuadric();
+    glTranslated(0, 0, -0.58);
+    gluCylinder(telhadoFundosEsq, 0.0, 0.23, 0.6, slices, stacks);
+    //Frente esquerda
+    telhadoFrenteEsq = gluNewQuadric();
+    glTranslated(0, 2, 0);
+    gluCylinder(telhadoFrenteEsq, 0.0, 0.23, 0.6, slices, stacks);
+    //Frente direita
+    telhadoFrenteDir = gluNewQuadric();
+    glTranslated(2, 0, 0);
+    gluCylinder(telhadoFrenteDir, 0.0, 0.23, 0.6, slices, stacks);
+    //Torre quadrada
+    telhadoTorre = gluNewQuadric();
+    glTranslated(-0.2, -1.6, -0.8);
+    gluCylinder(telhadoTorre, 0.0, 0.23, 0.6, slices, stacks);
+    glPopMatrix();
 
-        glColor3f(0.5, 0, 0);
-        glPushMatrix();
-        glTranslatef(0.0, -1.0, 0.0);
-        glutSolidCube (1);
-        glPopMatrix();
-
-        glColor3f(0, 0, 0);
-        glPushMatrix();
-        glTranslatef(0.0, 0.0, 0.0);
-        glutSolidCube (1);
-        glPopMatrix();
-
-        glColor3f(0, 0, 0);
-        glPushMatrix();
-        glTranslatef(-2.0, -1.0, 0.0);
-        glutSolidCube (1);
-        glPopMatrix();
-
-        // fim triângulo
-        glutSwapBuffers();
+    glutSwapBuffers();
 }
 
-//what?
-void reshape (int w, int h)
-{
-        glMatrixMode (GL_PROJECTION);
-        if (w <= h)
-                glOrtho (-5.0, 5.0, -5.0*(GLfloat)h/(GLfloat)w,
-                         5.0*(GLfloat)h/(GLfloat)w, -2.0, 20.0);
-        else
-                glOrtho (-5.0*(GLfloat)w/(GLfloat)h,
-                        5.0*(GLfloat)w/(GLfloat)h, -5.0, 5.0, -2.0, 20.0);
-        glMatrixMode(GL_MODELVIEW);
+// Desenha cena
+void drawScene() {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glMatrixMode (GL_MODELVIEW);
+    glLoadIdentity();
+    glRotatef(0.0, 0.0, 1.0, 0.0);
+    glRotatef(0.0, 1.0, 0.0, 0.0);
+    glEnd();
+    castle();
+    glutSwapBuffers();
 }
 
-void init(void)
-{
-        GLfloat mat_specular[] = { 0.0, 0.0,0.0, 0.0 };
-        GLfloat mat_shininess[] = { 0.0};
-        GLfloat light_position[] = { 0.0, 0.0, -1.0, 0.0 }; //algo
-
-        glClearColor (0.5, 0.2, 0.3, 90.0);
-        glShadeModel (GL_SMOOTH);
-        glLightModelfv(GL_LIGHT_MODEL_AMBIENT,light_position);
-        glMaterialfv(GL_LIGHT0, GL_AMBIENT, mat_specular);
-        glMaterialfv(GL_LIGHT0, GL_DIFFUSE, mat_shininess);
-        glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-
-        //colors environment
-        glEnable(GL_LIGHTING);
-        glEnable(GL_LIGHT0);
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_NORMALIZE);
-
-}
-//prt
-int main(int argc, char** argv)
-{
-
-        glutInit(&argc, argv);
-        glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-        glutInitWindowSize (800, 600);
-        glutCreateWindow("CGR - Gabriel Conejo - TC4 Castelo");
-        glutReshapeFunc(reshape); //call func
-        glutDisplayFunc(display); //open interface
-        init ();//prt
-        glutMainLoop(); //prt
-        return 0;
+// Funçao Reshape
+void reshape(int w, int h) {
+    glViewport(0, 0, w, h);
+    glMatrixMode (GL_PROJECTION);
+    glLoadIdentity();
+    glFrustum(-(float) w / (float) h, (float) w / (float) h, -1.0, 1.0, 1.0,
+            100.0);
+    glMatrixMode (GL_MODELVIEW);
+    glLoadIdentity();
 }
 
-//g++ -o prog castelo_GabrielConejo.cpp  -lm -L/usr/local/lib -lglut -lGL -lGLU
+void idle() {
+    glutPostRedisplay();
+}
+
+// LUZES E AMBIENTE
+const GLfloat light_ambient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+const GLfloat light_diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+const GLfloat light_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+const GLfloat light_position[] = { 2.0f, 5.0f, 5.0f, 0.0f };
+
+const GLfloat mat_ambient[] = { 0.7f, 0.7f, 0.7f, 1.0f };
+const GLfloat mat_diffuse[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+const GLfloat mat_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+const GLfloat high_shininess[] = { 100.0f };
+
+int main(int argc, char** argv) {
+    glutInit(&argc, argv);
+    glutInitWindowSize(TELAX, TELAY); //tamanho da tela
+    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+    glutCreateWindow("CGR - Gabriel Conejo - TC4 Boneco de Neve");
+    glutReshapeFunc(reshape);
+    glutDisplayFunc(drawScene); //callback, qual função vai ser chamada para mostrar
+    glutIdleFunc(idle);
+
+    glClearColor(0, 0, 0, 0);
+    glEnable (GL_CULL_FACE);
+    glCullFace (GL_BACK);
+
+    glEnable (GL_DEPTH_TEST);
+    glDepthFunc (GL_LESS);
+
+    glEnable (GL_LIGHT0);
+    glEnable (GL_NORMALIZE);
+    glEnable (GL_COLOR_MATERIAL);
+    glEnable (GL_LIGHTING);
+
+    glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+
+    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    glMaterialfv(GL_FRONT, GL_SHININESS, high_shininess);
+
+    glutMainLoop();
+    return 0;
+}
